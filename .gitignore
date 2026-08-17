@@ -1,0 +1,25 @@
+# Data & artifacts (tracked by DVC instead, or regenerated locally)
+data/raw/*.xlsx
+data/processed/*.csv
+models/*.pkl
+models/*.json
+models/plots/
+models/model_comparison.csv
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Monitoring
+monitoring/predictions.db
+monitoring/drift_report.json
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# OS
+.DS_Store

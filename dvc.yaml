@@ -1,0 +1,33 @@
+stages:
+  preprocess:
+    cmd: python src/preprocess.py --input data/raw/Dreher_and_Doyle_input_data.xlsx
+    deps:
+      - src/preprocess.py
+      - src/config.py
+      - data/raw/Dreher_and_Doyle_input_data.xlsx
+    outs:
+      - data/processed/processed.csv
+      - models/label_encoders.pkl
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - src/config.py
+      - data/processed/processed.csv
+      - models/label_encoders.pkl
+    params:
+      - params.yaml:
+          - train.n_estimators_rf
+          - train.max_depth_rf
+          - train.test_size
+          - train.random_state
+    outs:
+      - models/best_model.pkl
+      - models/scaler.pkl
+    metrics:
+      - models/model_config.json:
+          cache: false
+    plots:
+      - models/model_comparison.csv:
+          cache: false

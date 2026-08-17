@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign In · F2F AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <canvas id="bubble-canvas"></canvas>
+
+  <div class="auth-shell page">
+    <a class="auth-logo" href="{{ url_for('login') }}">
+      <span class="mark">ƒ</span> F2F AI
+    </a>
+
+    <div class="auth-card">
+      <span class="badge"><span class="tag">Secure</span> Failure Intelligence Engine</span>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to run live failure-risk predictions on Buchwald&ndash;Hartwig coupling reactions.</p>
+
+      {% if error %}
+        <div class="auth-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="auth-field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" autocomplete="username" required autofocus value="{{ username or '' }}" />
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required />
+        </div>
+        <input type="hidden" name="next" value="{{ next or '' }}" />
+        <button type="submit" class="auth-submit">Sign In &nearr;</button>
+      </form>
+
+      <p class="auth-hint">Demo access &mdash; <code>{{ demo_user }}</code> / <code>{{ demo_pass }}</code></p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/bubbles.js') }}"></script>
+</body>
+</html>

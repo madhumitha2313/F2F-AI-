@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>F2F AI &middot; Failure Intelligence Engine</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <canvas id="bubble-canvas"></canvas>
+
+  <div class="page">
+    <nav class="nav">
+      <a class="nav-logo" href="#home"><span class="mark">ƒ</span> F2F AI</a>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#models">Models</a>
+        <a href="#try-it">Try It</a>
+        <a href="#docs">Docs</a>
+      </div>
+      <div class="nav-right">
+        <span style="color: var(--text-low); font-size: 13px;">{{ username }}</span>
+        <a class="pill pill-ghost" href="{{ url_for('logout') }}">Log Out</a>
+        <a class="pill pill-solid" href="#try-it">Try the Demo &nearr;</a>
+      </div>
+    </nav>
+
+    <section id="home" class="hero">
+      <span class="badge"><span class="tag">New</span> {{ best_model }} Model Live &mdash; {{ accuracy_pct }}% Test Accuracy</span>
+      <h1>Predict Failure Before<br />You Run The Reaction</h1>
+      <p class="lede">
+        An explainable machine-learning framework that flags high-risk chemical reactions before they
+        ever reach the bench &mdash; trained on {{ training_count }} real Buchwald&ndash;Hartwig coupling outcomes, tuned
+        to catch failures precisely when it matters most.
+      </p>
+      <div class="hero-actions">
+        <a class="pill pill-outline-lg" href="#try-it">Run a Prediction &nearr;</a>
+        <a class="link-arrow" href="#pipeline">View the Architecture &#9656;</a>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>
+          <div class="value">{{ accuracy_pct }}%</div>
+          <div class="label">Model Accuracy ({{ best_model }})</div>
+        </div>
+        <div class="stat-card">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+          <div class="value">{{ training_count }}</div>
+          <div class="label">Reactions in Training Set</div>
+        </div>
+      </div>
+
+      <div class="stack-note"><span>Built on an open, reproducible MLOps stack</span></div>
+      <div class="stack-logos">
+        <span>scikit-learn</span><span>XGBoost</span><span>MLflow</span><span>DVC</span><span>Flask</span>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <div class="section-kicker">// Pipeline</div>
+      <div class="section-title">From raw reaction to<br />risk score</div>
+
+      <div class="pipeline-flow">
+        {% for step in pipeline_steps %}
+        <div class="pipe-step">
+          <div class="n">{{ step.n }}</div>
+          <h4>{{ step.title }}</h4>
+          <p>{{ step.body }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="capabilities">
+      <div class="section-kicker">// Capabilities</div>
+      <div class="section-title">Failure made visible</div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-top">
+            <span class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 2v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-11V2"/><path d="M9 2h6"/><path d="M7 16h10"/></svg>
+            </span>
+            <div class="tag-row">
+              <span class="tag">Random Forest</span><span class="tag">XGBoost</span>
+              <span class="tag">{{ roc_auc_pct }}% ROC-AUC</span><span class="tag">Recall-First</span>
+            </div>
+          </div>
+          <h3>Failure Prediction</h3>
+          <p>Every proposed ligand, base, additive, and aryl-halide combination is scored for failure risk before a single reagent is weighed out &mdash; trained on {{ training_count }} real Buchwald&ndash;Hartwig reactions.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <span class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+            </span>
+            <div class="tag-row">
+              <span class="tag">Feature Importance</span><span class="tag">SHAP-Ready</span>
+              <span class="tag">Transparent</span><span class="tag">Chemist-Readable</span>
+            </div>
+          </div>
+          <h3>Explainable by Design</h3>
+          <p>Every prediction comes with a reason. Feature importance surfaces exactly which reaction component is driving the failure call, so the output is a lead, not a black box.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <span class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </span>
+            <div class="tag-row">
+              <span class="tag">MLflow</span><span class="tag">DVC</span>
+              <span class="tag">Docker</span><span class="tag">Auto-Retrain</span>
+            </div>
+          </div>
+          <h3>Full MLOps Pipeline</h3>
+          <p>Versioned data, tracked experiments, a registered model, and a live Flask API &mdash; with drift detection watching for when it's time to retrain.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="models">
+      <div class="section-kicker">// Models</div>
+      <div class="section-title">Four models, one winner</div>
+      <table class="models-table">
+        <thead>
+          <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr>
+        </thead>
+        <tbody>
+          {% for m in models %}
+          <tr class="{{ 'best' if m.name == best_model else '' }}">
+            <td class="model-name">{{ m.name }}{% if m.name == best_model %}<span class="best-flag">BEST</span>{% endif %}</td>
+            <td>{{ '%.1f'|format(m.accuracy * 100) }}%</td>
+            <td>{{ '%.1f'|format(m.precision * 100) }}%</td>
+            <td>{{ '%.1f'|format(m.recall * 100) }}%</td>
+            <td>{{ '%.1f'|format(m.f1 * 100) }}%</td>
+            <td>{{ '%.1f'|format(m.roc_auc * 100) }}%</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="try-it">
+      <div class="section-kicker">// Try It Live</div>
+      <div class="section-title">Score a reaction</div>
+
+      <div class="try-panel">
+        <form id="predict-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="ligand">Ligand</label>
+              <select id="ligand" name="ligand">
+                {% for opt in ligand_options %}<option value="{{ opt.value }}">{{ opt.label }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="field">
+              <label for="base">Base</label>
+              <select id="base" name="base">
+                {% for opt in base_options %}<option value="{{ opt.value }}">{{ opt.label }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="field">
+              <label for="additive">Additive</label>
+              <select id="additive" name="additive">
+                {% for opt in additive_options %}<option value="{{ opt.value }}">{{ opt.label }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="field">
+              <label for="aryl_halide">Aryl Halide</label>
+              <select id="aryl_halide" name="aryl_halide">
+                {% for opt in aryl_options %}<option value="{{ opt.value }}">{{ opt.label }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-predict" id="predict-btn">Predict Failure Risk &nearr;</button>
+        </form>
+
+        <hr />
+
+        <div id="predict-result" class="result-row is-empty">
+          <div class="result-item">
+            <div class="value" id="result-outcome">&mdash;</div>
+            <div class="label">Predicted outcome ({{ best_model }})</div>
+          </div>
+          <div class="result-item">
+            <div class="value" id="result-prob">&mdash;</div>
+            <div class="label">Failure probability</div>
+          </div>
+          <div class="result-item">
+            <div class="value" id="result-conf">&mdash;</div>
+            <div class="label">Model confidence</div>
+          </div>
+        </div>
+        <div class="result-warning" id="result-warning"></div>
+        <div class="result-error" id="result-error">{{ model_error }}</div>
+      </div>
+    </section>
+
+    <section id="docs">
+      <div class="section-kicker">// Docs</div>
+      <div class="section-title">Quick reference</div>
+      <div class="docs-grid">
+        <div class="docs-card">
+          <h4>REST API</h4>
+          <p>Score a reaction from any client once you hold the session cookie, or call it server-side:</p>
+          <pre class="code-block">curl -X POST http://127.0.0.1:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{{ curl_example }}'</pre>
+        </div>
+        <div class="docs-card">
+          <h4>Local pipeline</h4>
+          <p>Reproduce training end to end:</p>
+          <pre class="code-block">python src/preprocess.py
+python src/train.py
+python api/app.py</pre>
+          <ul>
+            <li>Drift check: <code>python monitoring/drift_detector.py</code></li>
+            <li>Experiment UI: <code>mlflow ui</code></li>
+            <li>Full pipeline: <code>dvc repro</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      F2F AI &middot; Failure Intelligence Engine &mdash; Madhumitha N &amp; Manga Haripriya, AI &amp; Data Science, Chennai Institute of Technology
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/bubbles.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

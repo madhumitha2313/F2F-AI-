@@ -1,0 +1,9 @@
+train:
+  n_estimators_rf: 200
+  max_depth_rf: 10
+  n_estimators_xgb: 200
+  max_depth_xgb: 6
+  learning_rate_xgb: 0.1
+  test_size: 0.20
+  random_state: 42
+  failure_threshold: 5.0

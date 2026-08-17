@@ -113,6 +113,23 @@ def _training_count() -> str:
     return "3,955"
 
 
+FEATURE_LABELS = {"Ligand": "Ligand", "Additive": "Additive", "Base": "Base", "Aryl_halide": "Aryl Halide"}
+
+
+def _feature_importance():
+    """Read feature_importances_ off the trained tree model, if the model exposes it."""
+    if predictor is None or not hasattr(predictor.model, "feature_importances_"):
+        return []
+    raw = predictor.model.feature_importances_
+    cols = predictor.model_config.get("feature_cols", cfg.FEATURE_COLS)
+    total = float(sum(raw)) or 1.0
+    pairs = [
+        {"name": FEATURE_LABELS.get(col, col), "pct": round(float(val) / total * 100, 1)}
+        for col, val in zip(cols, raw)
+    ]
+    return sorted(pairs, key=lambda p: p["pct"], reverse=True)
+
+
 def _model_comparison():
     if not os.path.exists(cfg.COMPARISON_CSV_PATH):
         return []
@@ -185,6 +202,8 @@ def index():
         )
     )
 
+    live_stats = logger.get_summary_stats()
+
     return render_template(
         "index.html",
         username=session.get("username", ""),
@@ -194,12 +213,15 @@ def index():
         training_count=_training_count(),
         models=models,
         pipeline_steps=PIPELINE_STEPS,
+        feature_importance=_feature_importance(),
         ligand_options=ligand_options,
         base_options=base_options,
         additive_options=additive_options,
         aryl_options=aryl_options,
         curl_example=curl_example,
         model_error=("" if predictor else f"Model not loaded: {MODEL_LOAD_ERROR}"),
+        live_stats=live_stats,
+        model_up=(predictor is not None),
     )
 
 

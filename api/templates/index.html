@@ -27,42 +27,67 @@
     </nav>
 
     <section id="home" class="hero">
-      <span class="badge"><span class="tag">New</span> {{ best_model }} Model Live &mdash; {{ accuracy_pct }}% Test Accuracy</span>
-      <h1>Predict Failure Before<br />You Run The Reaction</h1>
-      <p class="lede">
+      <span class="badge reveal"><span class="tag">New</span> {{ best_model }} Model Live &mdash; {{ accuracy_pct }}% Test Accuracy</span>
+      <h1 class="reveal">Predict Failure Before<br />You Run The Reaction</h1>
+      <p class="lede reveal">
         An explainable machine-learning framework that flags high-risk chemical reactions before they
         ever reach the bench &mdash; trained on {{ training_count }} real Buchwald&ndash;Hartwig coupling outcomes, tuned
         to catch failures precisely when it matters most.
       </p>
-      <div class="hero-actions">
+      <div class="hero-actions reveal">
         <a class="pill pill-outline-lg" href="#try-it">Run a Prediction &nearr;</a>
         <a class="link-arrow" href="#pipeline">View the Architecture &#9656;</a>
       </div>
 
-      <div class="stat-row">
+      <div class="stat-row reveal-stagger">
         <div class="stat-card">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>
-          <div class="value">{{ accuracy_pct }}%</div>
+          <div class="value"><span data-count-target="{{ accuracy_pct }}" data-count-suffix="%">0%</span></div>
           <div class="label">Model Accuracy ({{ best_model }})</div>
         </div>
         <div class="stat-card">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
-          <div class="value">{{ training_count }}</div>
+          <div class="value"><span data-count-target="{{ training_count.replace(',', '') }}" data-count-decimals="0">0</span></div>
           <div class="label">Reactions in Training Set</div>
         </div>
       </div>
 
-      <div class="stack-note"><span>Built on an open, reproducible MLOps stack</span></div>
-      <div class="stack-logos">
+      <div class="stack-note reveal"><span>Built on an open, reproducible MLOps stack</span></div>
+      <div class="stack-logos reveal">
         <span>scikit-learn</span><span>XGBoost</span><span>MLflow</span><span>DVC</span><span>Flask</span>
       </div>
     </section>
 
     <section id="pipeline">
-      <div class="section-kicker">// Pipeline</div>
-      <div class="section-title">From raw reaction to<br />risk score</div>
+      <div class="section-kicker reveal">// Pipeline</div>
+      <div class="section-title reveal">From raw reaction to<br />risk score</div>
 
-      <div class="pipeline-flow">
+      <div id="live-panel" class="live-panel reveal">
+        <div class="live-status">
+          <span id="live-dot" class="live-dot {{ 'up' if model_up else 'down' }}"></span>
+          <span id="live-status-text">{{ (best_model + ' model live') if model_up else 'Model unavailable' }}</span>
+        </div>
+        <div class="live-metrics">
+          <div class="live-metric">
+            <div class="value" id="live-total">{{ live_stats.total_predictions or 0 }}</div>
+            <div class="label">Predictions Logged</div>
+          </div>
+          <div class="live-metric">
+            <div class="value" id="live-failures">{{ live_stats.flagged_failures or 0 }}</div>
+            <div class="label">Flagged Failures</div>
+          </div>
+          <div class="live-metric">
+            <div class="value" id="live-rate">{{ '%.1f'|format(live_stats.failure_rate * 100) + '%' if live_stats.failure_rate is not none else '—' }}</div>
+            <div class="label">Live Failure Rate</div>
+          </div>
+          <div class="live-metric">
+            <div class="value" id="live-conf">{{ '%.1f'|format(live_stats.average_confidence * 100) + '%' if live_stats.average_confidence is not none else '—' }}</div>
+            <div class="label">Avg. Confidence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-flow reveal-stagger">
         {% for step in pipeline_steps %}
         <div class="pipe-step">
           <div class="n">{{ step.n }}</div>
@@ -74,9 +99,9 @@
     </section>
 
     <section id="capabilities">
-      <div class="section-kicker">// Capabilities</div>
-      <div class="section-title">Failure made visible</div>
-      <div class="card-grid">
+      <div class="section-kicker reveal">// Capabilities</div>
+      <div class="section-title reveal">Failure made visible</div>
+      <div class="card-grid reveal-stagger">
         <div class="card">
           <div class="card-top">
             <span class="card-icon">
@@ -102,6 +127,17 @@
           </div>
           <h3>Explainable by Design</h3>
           <p>Every prediction comes with a reason. Feature importance surfaces exactly which reaction component is driving the failure call, so the output is a lead, not a black box.</p>
+          {% if feature_importance %}
+          <div class="imp-chart">
+            {% for f in feature_importance %}
+            <div class="imp-row">
+              <div class="imp-name">{{ f.name }}</div>
+              <div class="imp-track"><div class="imp-fill" data-width="{{ f.pct }}"></div></div>
+              <div class="imp-pct">{{ f.pct }}%</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
         <div class="card">
           <div class="card-top">
@@ -120,9 +156,9 @@
     </section>
 
     <section id="models">
-      <div class="section-kicker">// Models</div>
-      <div class="section-title">Four models, one winner</div>
-      <table class="models-table">
+      <div class="section-kicker reveal">// Models</div>
+      <div class="section-title reveal">Four models, one winner</div>
+      <table class="models-table reveal">
         <thead>
           <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr>
         </thead>
@@ -142,10 +178,10 @@
     </section>
 
     <section id="try-it">
-      <div class="section-kicker">// Try It Live</div>
-      <div class="section-title">Score a reaction</div>
+      <div class="section-kicker reveal">// Try It Live</div>
+      <div class="section-title reveal">Score a reaction</div>
 
-      <div class="try-panel">
+      <div class="try-panel reveal">
         <form id="predict-form">
           <div class="form-grid">
             <div class="field">
@@ -178,18 +214,27 @@
 
         <hr />
 
-        <div id="predict-result" class="result-row is-empty">
-          <div class="result-item">
-            <div class="value" id="result-outcome">&mdash;</div>
-            <div class="label">Predicted outcome ({{ best_model }})</div>
-          </div>
-          <div class="result-item">
-            <div class="value" id="result-prob">&mdash;</div>
-            <div class="label">Failure probability</div>
-          </div>
-          <div class="result-item">
-            <div class="value" id="result-conf">&mdash;</div>
-            <div class="label">Model confidence</div>
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 120 120">
+            <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+            <circle id="gauge-fill" class="gauge-fill" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+            <text id="gauge-pct" class="gauge-pct" x="60" y="56">&mdash;</text>
+            <text id="gauge-caption" class="gauge-caption" x="60" y="74">awaiting input</text>
+          </svg>
+
+          <div id="predict-result" class="result-row is-empty">
+            <div class="result-item">
+              <div class="value" id="result-outcome">&mdash;</div>
+              <div class="label">Predicted outcome ({{ best_model }})</div>
+            </div>
+            <div class="result-item">
+              <div class="value" id="result-prob">&mdash;</div>
+              <div class="label">Failure probability</div>
+            </div>
+            <div class="result-item">
+              <div class="value" id="result-conf">&mdash;</div>
+              <div class="label">Model confidence</div>
+            </div>
           </div>
         </div>
         <div class="result-warning" id="result-warning"></div>
@@ -198,9 +243,9 @@
     </section>
 
     <section id="docs">
-      <div class="section-kicker">// Docs</div>
-      <div class="section-title">Quick reference</div>
-      <div class="docs-grid">
+      <div class="section-kicker reveal">// Docs</div>
+      <div class="section-title reveal">Quick reference</div>
+      <div class="docs-grid reveal-stagger">
         <div class="docs-card">
           <h4>REST API</h4>
           <p>Score a reaction from any client once you hold the session cookie, or call it server-side:</p>
@@ -229,6 +274,8 @@ python api/app.py</pre>
   </div>
 
   <script src="{{ url_for('static', filename='js/bubbles.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/monitor.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
